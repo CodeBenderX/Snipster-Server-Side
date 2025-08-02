@@ -12,23 +12,19 @@ shortened_length = 8
 @app.post('/shorten')
 def shorten_url():
   long_url = request.json['url']
-  short_url = ''
+  short_url = '/snipster/'
   
-  for i in range(shortened_length):
-    short_url += random.choice(letters)
+  while True:
+        short_path = ''.join(random.choice(letters) for _ in range(shortened_length))
+        short_url = '/snipster/' + short_path
+        if short_url not in url_mappings:
+            url_mappings[short_url] = long_url
+            return short_url, 201
 
-    if short_url not in url_mappings:
-      url_mappings[short_url] = long_url
-      return short_url, 201
-    else:
-      return 'Short URL already exists!', 400
-
-  url_mappings[short_url] = long_url
-  return short_url
-
-@app.get('/s/<id>')  
+@app.get('/snipster/<id>')  
 def redirect_url(id):
-  long_url = url_mappings.get(f'/s/{id}')
+
+  long_url = url_mappings.get(f'/snipster/{id}')
   if long_url:
     return redirect(long_url)
   else:
